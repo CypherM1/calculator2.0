@@ -1,7 +1,9 @@
 const display = document.getElementById("display");
 const historyDiv = document.getElementById("history");
+const buttons = document.querySelectorAll(".buttons button");
 let currentInput = "";
 
+// Format number with commas
 function formatWithCommas(value) {
   if (!value) return value;
   if (value === "-") return value;
@@ -18,6 +20,7 @@ function formatWithCommas(value) {
   return Number(value).toLocaleString();
 }
 
+// Format full expression (numbers with commas, keep operators)
 function formatExpression(expr) {
   const tokens = expr.split(/([+\-*/])/);
   return tokens.map(token => {
@@ -27,41 +30,55 @@ function formatExpression(expr) {
 }
 
 function updateDisplay() {
-  if (!currentInput) {
-    display.textContent = "0";
-    return;
-  }
-  display.textContent = formatExpression(currentInput);
+  display.textContent = currentInput ? formatExpression(currentInput) : "0";
 }
 
+// Append number with rules: prevent multiple leading zeros
 function appendNumber(num) {
-  if (currentInput === "0") currentInput = "";
+  const parts = currentInput.split(/([+\-*/])/);
+  const lastPart = parts[parts.length - 1];
+
+  if (lastPart === "0" && num === "0") return; // prevent "00"
+  if (lastPart === "0" && num !== "0" && !lastPart.includes(".")) {
+    currentInput = currentInput.slice(0, -1); // replace leading zero
+  }
+
   currentInput += num;
   updateDisplay();
 }
 
+// Append operator: prevent multiple consecutive operators
 function appendOperator(op) {
-  if (currentInput === "") return;
+  if (!currentInput) return;
   const lastChar = currentInput.slice(-1);
-  if ("+-*/".includes(lastChar)) currentInput = currentInput.slice(0, -1);
+  if ("+-*/".includes(lastChar)) {
+    currentInput = currentInput.slice(0, -1); // replace last operator
+  }
   currentInput += op;
   updateDisplay();
 }
 
+// Append decimal: only one per number segment
 function appendDecimal() {
-  const parts = currentInput.split(/[\+\-\*\/]/);
+  const parts = currentInput.split(/([+\-*/])/);
   const lastPart = parts[parts.length - 1];
   if (!lastPart.includes(".")) {
-    currentInput += ".";
+    if (lastPart === "") {
+      currentInput += "0."; // add leading zero if decimal at start
+    } else {
+      currentInput += ".";
+    }
     updateDisplay();
   }
 }
 
+// Clear display
 function clearDisplay() {
   currentInput = "";
   updateDisplay();
 }
 
+// Evaluate expression safely
 function calculateResult() {
   try {
     const result = eval(currentInput);
@@ -74,6 +91,7 @@ function calculateResult() {
   }
 }
 
+// Add entry to history with formatted commas
 function addToHistory(entry) {
   const [expr, res] = entry.split("=");
   const formattedExpr = formatExpression(expr.trim());
@@ -87,6 +105,23 @@ function addToHistory(entry) {
   historyDiv.scrollTop = historyDiv.scrollHeight;
 }
 
+// Button event listeners
+buttons.forEach(button => {
+  const action = button.dataset.action;
+  if (action === "number") {
+    button.addEventListener("click", () => appendNumber(button.dataset.value));
+  } else if (action === "operator") {
+    button.addEventListener("click", () => appendOperator(button.dataset.value));
+  } else if (action === "decimal") {
+    button.addEventListener("click", appendDecimal);
+  } else if (action === "clear") {
+    button.addEventListener("click", clearDisplay);
+  } else if (action === "equals") {
+    button.addEventListener("click", calculateResult);
+  }
+});
+
+// Keyboard support
 document.addEventListener("keydown", function (e) {
   if (e.key >= "0" && e.key <= "9") {
     appendNumber(e.key);
