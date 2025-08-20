@@ -1,0 +1,130 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  color: #cc3333;
+}
+
+.container {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.calculator {
+  background: #111;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(139, 0, 0, 0.6);
+  width: 300px;
+}
+
+.display {
+  width: 100%;
+  height: 60px;
+  background: #000;
+  color: #cc3333;
+  font-size: 2em;
+  text-align: right;
+  padding: 10px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  overflow-x: auto;
+  user-select: none;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  position: relative;
+}
+
+button {
+  padding: 20px;
+  font-size: 1.2em;
+  border: none;
+  border-radius: 5px;
+  background: #222;
+  color: #cc3333;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  user-select: none;
+}
+
+button:hover {
+  background: #8B0000;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.operator {
+  background: #8B0000;
+  color: white;
+}
+
+.operator:hover {
+  background: #a30000;
+}
+
+.equal {
+  background: #a30000;
+  color: white;
+  grid-column: span 1;
+}
+
+.clear {
+  background: #660000;
+  color: white;
+}
+
+.clear:hover {
+  background: #8B0000;
+}
+
+.history {
+  background: #111;
+  color: #cc3333;
+  border: 1px solid #330000;
+  border-radius: 10px;
+  padding: 15px;
+  width: 250px;
+  max-height: 400px;
+  overflow-y: auto;
+  user-select: none;
+}
+
+.history h2 {
+  margin-top: 0;
+  font-size: 1.2em;
+  border-bottom: 1px solid #330000;
+  padding-bottom: 5px;
+}
+
+.history-entry {
+  margin: 5px 0;
+  font-family: monospace;
+}
+
+/* Position zero button under '2' (column 2, row 5) */
+#zero-btn {
+  grid-column: 2;
+  grid-row: 5;
+}
+
+@media (max-width: 700px) {
+  .container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .history {
+    width: 90%;
+    max-height: 200px;
+  }
+}
